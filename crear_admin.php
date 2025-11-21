@@ -1,5 +1,5 @@
 <?php
-require_once 'conexion.php';
+require_once __DIR__ . '/conexion.php';
 
 $nombre  = 'Admin Principal';
 $email   = 'admin@vet.local';
@@ -8,14 +8,24 @@ $pass    = 'AdminSegura@2025';
 
 $hash = password_hash($pass, PASSWORD_DEFAULT);
 
-$stmt = $con->prepare(
-  "INSERT INTO usuarios (nombre, email, usuario, password_hash, rol) 
-   VALUES (?,?,?,?, 'ADMIN')"
-);
-$stmt->bind_param("ssss", $nombre, $email, $usuario, $hash);
+// Verificar si ya existe el usuario
+$check = $con->prepare("SELECT id FROM usuarios WHERE usuario = ?");
+$check->execute([$usuario]);
 
-if ($stmt->execute()) {
-    echo "Admin creado. Usuario: admin / Clave: $pass";
+if ($check->fetch()) {
+    die("El usuario ADMIN ya existe.");
+}
+
+// Insertar el administrador
+$stmt = $con->prepare(
+    "INSERT INTO usuarios (nombre, email, usuario, password_hash, rol, activo)
+     VALUES (?, ?, ?, ?, 'ADMIN', 1)"
+);
+
+$ok = $stmt->execute([$nombre, $email, $usuario, $hash]);
+
+if ($ok) {
+    echo "Admin creado correctamente. Usuario: admin / Clave: $pass";
 } else {
-    echo "Error: " . $con->error;
+    echo "Error al crear admin.";
 }
