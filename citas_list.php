@@ -19,7 +19,8 @@ JOIN usuarios u ON ct.vet_id = u.id
 ORDER BY ct.fecha_hora DESC
 ";
 
-$result = $con->query($sql);
+$stmt = $con->query($sql);
+$citas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <?php include __DIR__ . '/includes/header.php'; ?>
 
@@ -45,7 +46,7 @@ $result = $con->query($sql);
             <th>Estado</th>
         </tr>
 
-        <?php while($row = $result->fetch_assoc()): ?>
+        <?php foreach ($citas as $row): ?>
             <?php
                 $fh = strtotime($row['fecha_hora']);
                 $fecha = date('Y-m-d', $fh);
@@ -61,6 +62,6 @@ $result = $con->query($sql);
                 <td><?= htmlspecialchars($row['motivo']) ?></td>
                 <td><?= htmlspecialchars($row['estado']) ?></td>
             </tr>
-        <?php endwhile; ?>
+        <?php endforeach; ?>
     </table>
 </main>
