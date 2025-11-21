@@ -2,16 +2,17 @@
 require_once __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/conexion.php';
 
-// Solo ADMIN y RECEPCION verán este módulo (puedes ajustar si quieres que VET vea también)
+// Solo ADMIN y RECEPCION verán este módulo
 require_role(['ADMIN', 'RECEPCION']);
 
+// IMPORTANT: Usar $conn porque en conexion.php se define $conn (no $con)
 $sql = "SELECT m.id, m.nombre, m.especie, m.raza, m.fecha_nac, m.creado_en,
                c.nombre AS cliente
         FROM mascotas m
         INNER JOIN clientes c ON m.cliente_id = c.id
         ORDER BY m.creado_en DESC";
 
-$result = $con->query($sql);
+$stmt = $conn->query($sql);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -67,16 +68,16 @@ $result = $con->query($sql);
         </tr>
         </thead>
         <tbody>
-        <?php if ($result && $result->num_rows > 0): ?>
-            <?php while ($row = $result->fetch_assoc()): ?>
+        <?php if ($stmt && $stmt->rowCount() > 0): ?>
+            <?php while ($row = $stmt->fetch(PDO::FETCH_ASSOC)): ?>
                 <tr>
-                    <td><?php echo (int)$row['id']; ?></td>
-                    <td><?php echo htmlspecialchars($row['nombre']); ?></td>
-                    <td><?php echo htmlspecialchars($row['especie']); ?></td>
-                    <td><?php echo htmlspecialchars($row['raza']); ?></td>
-                    <td><?php echo htmlspecialchars($row['fecha_nac']); ?></td>
-                    <td><?php echo htmlspecialchars($row['cliente']); ?></td>
-                    <td><?php echo htmlspecialchars($row['creado_en']); ?></td>
+                    <td><?= (int) $row['id'] ?></td>
+                    <td><?= htmlspecialchars($row['nombre']) ?></td>
+                    <td><?= htmlspecialchars($row['especie']) ?></td>
+                    <td><?= htmlspecialchars($row['raza']) ?></td>
+                    <td><?= htmlspecialchars($row['fecha_nac']) ?></td>
+                    <td><?= htmlspecialchars($row['cliente']) ?></td>
+                    <td><?= htmlspecialchars($row['creado_en']) ?></td>
                 </tr>
             <?php endwhile; ?>
         <?php else: ?>
@@ -87,3 +88,4 @@ $result = $con->query($sql);
 </main>
 </body>
 </html>
+
