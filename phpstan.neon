@@ -1,13 +1,12 @@
 parameters:
-  # Excluir la carpeta vendor para evitar errores en dependencias
-  excludePaths:
-    - vendor/*
+    level: 4
 
-  # Archivo que se carga antes del análisis: aquí están los stubs
-  bootstrapFiles:
-    - stubs.php
+    bootstrapFiles:
+        - stubs.php
 
-  # (Opcional) ignora mensajes concretos si los quieres ocultar
-  ignoreErrors:
-    # ejemplo para ignorar mensajes concretos:
-    # - '#Function require_role not found#'
+    paths:
+        - .
+
+    excludePaths:
+        - vendor/*
+
