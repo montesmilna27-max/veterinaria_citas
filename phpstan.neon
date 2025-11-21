@@ -14,5 +14,3 @@ parameters:
             - vendor/*
             - node_modules/*
             - includes/get_mascotas.php (?)   # opcional, se ignora si no existe
-
-    checkMissingIterableValueType: false
