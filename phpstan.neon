@@ -4,7 +4,7 @@ parameters:
     # Archivos que PHPStan carga antes del análisis (aquí van tus stubs)
     bootstrapFiles:
         - stubs.php
-        - conexion.php   # <-- útil si quieres definir $conn globalmente
+        - conexion.php   # útil si quieres definir $conn globalmente
 
     paths:
         - .
@@ -13,8 +13,6 @@ parameters:
         analyse:
             - vendor/*
             - node_modules/*
-            - includes/get_mascotas.php   # opcional, si te da problemas
+            - includes/get_mascotas.php (?)   # opcional, se ignora si no existe
 
     checkMissingIterableValueType: false
-
-
