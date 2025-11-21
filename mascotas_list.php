@@ -1,18 +1,17 @@
-<?php
+<?php 
 require_once __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/conexion.php';
 
 // Solo ADMIN y RECEPCION verán este módulo
 require_role(['ADMIN', 'RECEPCION']);
 
-// IMPORTANT: Usar $conn porque en conexion.php se define $conn (no $con)
 $sql = "SELECT m.id, m.nombre, m.especie, m.raza, m.fecha_nac, m.creado_en,
                c.nombre AS cliente
         FROM mascotas m
         INNER JOIN clientes c ON m.cliente_id = c.id
         ORDER BY m.creado_en DESC";
 
-$stmt = $conn->query($sql);
+$stmt = $con->query($sql);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -38,10 +37,10 @@ $stmt = $conn->query($sql);
 <header>
     <div>
         <strong>VetCitas</strong>
-        <span style="font-size:.9em;opacity:.8;">[<?php echo htmlspecialchars($_SESSION['user_rol']); ?>]</span>
+        <span style="font-size:.9em;opacity:.8;">[<?= htmlspecialchars($_SESSION['user_rol']) ?>]</span>
     </div>
     <div>
-        <?php echo htmlspecialchars($_SESSION['user_name']); ?>
+        <?= htmlspecialchars($_SESSION['user_name']) ?>
         <a href="dashboard.php">Inicio</a>
         <a href="clientes_list.php">Clientes</a>
         <a href="logout.php">Cerrar sesión</a>
@@ -71,7 +70,7 @@ $stmt = $conn->query($sql);
         <?php if ($stmt && $stmt->rowCount() > 0): ?>
             <?php while ($row = $stmt->fetch(PDO::FETCH_ASSOC)): ?>
                 <tr>
-                    <td><?= (int) $row['id'] ?></td>
+                    <td><?= (int)$row['id'] ?></td>
                     <td><?= htmlspecialchars($row['nombre']) ?></td>
                     <td><?= htmlspecialchars($row['especie']) ?></td>
                     <td><?= htmlspecialchars($row['raza']) ?></td>
@@ -88,4 +87,3 @@ $stmt = $conn->query($sql);
 </main>
 </body>
 </html>
-
