@@ -8,23 +8,22 @@ $busqueda = trim($_GET['q'] ?? '');
 
 if ($busqueda !== '') {
     $like = "%{$busqueda}%";
-    $stmt = $con->prepare(
-        "SELECT id, nombre, telefono, email, direccion, creado_en
-         FROM clientes
-         WHERE nombre LIKE ? OR telefono LIKE ? OR email LIKE ?
-         ORDER BY creado_en DESC"
-    );
-    $stmt->bind_param("sss", $like, $like, $like);
+    $stmt = $con->prepare("
+        SELECT id, nombre, telefono, email, direccion, creado_en
+        FROM clientes
+        WHERE nombre LIKE :q OR telefono LIKE :q OR email LIKE :q
+        ORDER BY creado_en DESC
+    ");
+    $stmt->execute([':q' => $like]);
 } else {
-    $stmt = $con->prepare(
-        "SELECT id, nombre, telefono, email, direccion, creado_en
-         FROM clientes
-         ORDER BY creado_en DESC"
-    );
+    $stmt = $con->query("
+        SELECT id, nombre, telefono, email, direccion, creado_en
+        FROM clientes
+        ORDER BY creado_en DESC
+    ");
 }
 
-$stmt->execute();
-$result = $stmt->get_result();
+$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -67,7 +66,8 @@ $result = $stmt->get_result();
         <h1>Clientes</h1>
         <div>
             <form method="get" action="clientes_list.php">
-                <input type="text" name="q" placeholder="Buscar..." value="<?php echo htmlspecialchars($busqueda); ?>">
+                <input type="text" name="q" placeholder="Buscar..." 
+                       value="<?php echo htmlspecialchars($busqueda); ?>">
                 <button class="btn btn-secondary" type="submit">Buscar</button>
             </form>
         </div>
@@ -88,17 +88,17 @@ $result = $stmt->get_result();
         </tr>
         </thead>
         <tbody>
-        <?php if ($result && $result->num_rows > 0): ?>
-            <?php while ($row = $result->fetch_assoc()): ?>
+        <?php if ($result): ?>
+            <?php foreach ($result as $row): ?>
                 <tr>
-                    <td><?php echo (int)$row['id']; ?></td>
-                    <td><?php echo htmlspecialchars($row['nombre']); ?></td>
-                    <td><?php echo htmlspecialchars($row['telefono']); ?></td>
-                    <td><?php echo htmlspecialchars($row['email']); ?></td>
-                    <td><?php echo htmlspecialchars($row['direccion']); ?></td>
-                    <td><?php echo htmlspecialchars($row['creado_en']); ?></td>
+                    <td><?= (int)$row['id'] ?></td>
+                    <td><?= htmlspecialchars($row['nombre']) ?></td>
+                    <td><?= htmlspecialchars($row['telefono']) ?></td>
+                    <td><?= htmlspecialchars($row['email']) ?></td>
+                    <td><?= htmlspecialchars($row['direccion']) ?></td>
+                    <td><?= htmlspecialchars($row['creado_en']) ?></td>
                 </tr>
-            <?php endwhile; ?>
+            <?php endforeach; ?>
         <?php else: ?>
             <tr><td colspan="6">No hay clientes registrados.</td></tr>
         <?php endif; ?>
@@ -107,4 +107,3 @@ $result = $stmt->get_result();
 </main>
 </body>
 </html>
-
